@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1771251958643,
+      "tag": "0000_good_bastion",
+      "breakpoints": true
+    }
+  ]
+}

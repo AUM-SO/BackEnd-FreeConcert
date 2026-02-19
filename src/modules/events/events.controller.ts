@@ -41,6 +41,15 @@ export class EventsController {
     return this.eventsService.findOne(id);
   }
 
+  @Get(':id/seats')
+  @ApiOperation({ summary: 'Get seats for an event' })
+  findSeats(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('status') status?: string,
+  ) {
+    return this.eventsService.findSeats(id, status);
+  }
+
   @Patch(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))

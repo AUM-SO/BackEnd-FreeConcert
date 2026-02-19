@@ -63,6 +63,20 @@ export class EventsService {
     return event;
   }
 
+  async findSeats(eventId: number, status?: string) {
+    await this.findOne(eventId);
+
+    const conditions = [eq(seats.eventId, eventId)];
+    if (status) {
+      conditions.push(eq(seats.status, status));
+    }
+
+    return this.db
+      .select()
+      .from(seats)
+      .where(and(...conditions));
+  }
+
   async update(id: number, updateDto: Partial<CreateEventDto>) {
     await this.findOne(id);
 

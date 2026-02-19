@@ -1,7 +1,7 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { eq, like, and, sql } from 'drizzle-orm';
+import { eq, like, and, sql, inArray } from 'drizzle-orm';
 import { DRIZZLE } from '../../database/drizzle.module';
-import { events } from '../../database/schema';
+import { events, seats, bookings } from '../../database/schema';
 import { CreateEventDto } from './dto/create-event.dto';
 import { QueryEventDto } from './dto/query-event.dto';
 
@@ -12,8 +12,6 @@ export class EventsService {
   async create(createEventDto: CreateEventDto) {
     const result = await this.db.insert(events).values({
       ...createEventDto,
-      startDate: new Date(createEventDto.startDate),
-      endDate: new Date(createEventDto.endDate),
       availableSeats: createEventDto.totalSeats,
     });
     const [event] = await this.db
@@ -79,7 +77,20 @@ export class EventsService {
 
   async remove(id: number) {
     await this.findOne(id);
+
+    // Delete related bookings and seats before deleting the event
+    const eventSeats = await this.db
+      .select({ id: seats.id })
+      .from(seats)
+      .where(eq(seats.eventId, id));
+    if (eventSeats.length > 0) {
+      const seatIds = eventSeats.map((s: { id: number }) => s.id);
+      await this.db.delete(bookings).where(inArray(bookings.seatId, seatIds));
+      await this.db.delete(seats).where(eq(seats.eventId, id));
+    }
+    await this.db.delete(bookings).where(eq(bookings.eventId, id));
     await this.db.delete(events).where(eq(events.id, id));
+
     return { message: `Event #${id} deleted` };
   }
 }

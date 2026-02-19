@@ -16,14 +16,6 @@ export class CreateEventDto {
   @IsString()
   imageUrl?: string;
 
-  @ApiProperty({ example: '2026-06-15T18:00:00Z' })
-  @IsDateString()
-  startDate: string;
-
-  @ApiProperty({ example: '2026-06-15T22:00:00Z' })
-  @IsDateString()
-  endDate: string;
-
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()

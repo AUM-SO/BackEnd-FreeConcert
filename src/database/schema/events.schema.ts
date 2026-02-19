@@ -6,8 +6,6 @@ export const events = mysqlTable('events', {
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
   imageUrl: text('image_url'),
-  startDate: timestamp('start_date').notNull(),
-  endDate: timestamp('end_date').notNull(),
   venueId: int('venue_id').references(() => venues.id),
   totalSeats: int('total_seats').notNull().default(0),
   availableSeats: int('available_seats').notNull().default(0),

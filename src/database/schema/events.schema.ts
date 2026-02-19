@@ -9,7 +9,7 @@ export const events = mysqlTable('events', {
   venueId: int('venue_id').references(() => venues.id),
   totalSeats: int('total_seats').notNull().default(0),
   availableSeats: int('available_seats').notNull().default(0),
-  status: varchar('status', { length: 50 }).notNull().default('draft'),
+  status: varchar('status', { length: 50 }).notNull().default('published'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull().onUpdateNow(),
 });

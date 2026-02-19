@@ -8,7 +8,7 @@ export class QueryEventDto extends PaginationDto {
   @IsString()
   search?: string;
 
-  @ApiPropertyOptional({ enum: ['draft', 'published', 'cancelled'] })
+  @ApiPropertyOptional({ enum: ['published', 'cancelled'] })
   @IsOptional()
   @IsString()
   status?: string;

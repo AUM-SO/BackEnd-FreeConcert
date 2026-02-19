@@ -92,6 +92,7 @@ async function seed() {
         description:
           'The biggest rock festival of the year featuring international and local bands',
         imageUrl: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3',
+        venueId: 1,
         totalSeats: 100,
         availableSeats: 100,
         status: 'published',
@@ -100,6 +101,7 @@ async function seed() {
         title: 'Jazz Night Under Stars',
         description: 'Relaxing evening of smooth jazz by the riverside',
         imageUrl: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4',
+        venueId: 2,
         totalSeats: 80,
         availableSeats: 80,
         status: 'published',
@@ -108,6 +110,7 @@ async function seed() {
         title: 'Acoustic Sunset Session',
         description: 'Intimate acoustic performance with city skyline views',
         imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14',
+        venueId: 3,
         totalSeats: 50,
         availableSeats: 50,
         status: 'published',

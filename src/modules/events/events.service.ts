@@ -12,7 +12,6 @@ export class EventsService {
   async create(createEventDto: CreateEventDto) {
     const result = await this.db.insert(events).values({
       ...createEventDto,
-      availableSeats: createEventDto.totalSeats,
     });
     const [event] = await this.db
       .select()

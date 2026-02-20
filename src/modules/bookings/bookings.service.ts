@@ -1,13 +1,15 @@
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 import { eq, and, ne } from 'drizzle-orm';
+import { MySql2Database } from 'drizzle-orm/mysql2';
 import { DRIZZLE } from '../../database/drizzle.module';
+import * as schema from '../../database/schema';
 import { bookings, seats, events, users } from '../../database/schema';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { randomBytes } from 'crypto';
 
 @Injectable()
 export class BookingsService {
-  constructor(@Inject(DRIZZLE) private readonly db: any) {}
+  constructor(@Inject(DRIZZLE) private readonly db: MySql2Database<typeof schema>) {}
 
   async create(userId: number, createBookingDto: CreateBookingDto) {
     // Check event exists
@@ -19,6 +21,13 @@ export class BookingsService {
 
     if (!event) {
       throw new NotFoundException('Event not found');
+    }
+
+    // Fetch user for username
+    const [user] = await this.db.select().from(users).where(eq(users.id, userId)).limit(1);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
 
     // Check if user already has any active booking (1 user = 1 reservation)
@@ -51,6 +60,8 @@ export class BookingsService {
       userId,
       eventId: createBookingDto.eventId,
       seatId: createBookingDto.seatId,
+      username: user.name,
+      concertName: event.title,
       bookingCode,
       status: 'confirmed',
     });
@@ -86,23 +97,14 @@ export class BookingsService {
         userId: bookings.userId,
         eventId: bookings.eventId,
         seatId: bookings.seatId,
+        username: bookings.username,
+        concertName: bookings.concertName,
         status: bookings.status,
         bookingCode: bookings.bookingCode,
         createdAt: bookings.createdAt,
         updatedAt: bookings.updatedAt,
-        user: {
-          id: users.id,
-          email: users.email,
-          name: users.name,
-        },
-        event: {
-          id: events.id,
-          title: events.title,
-        },
       })
-      .from(bookings)
-      .leftJoin(users, eq(bookings.userId, users.id))
-      .leftJoin(events, eq(bookings.eventId, events.id));
+      .from(bookings);
 
     if (userId) {
       return query.where(eq(bookings.userId, userId));

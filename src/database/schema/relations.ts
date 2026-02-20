@@ -1,7 +1,6 @@
 import { relations } from 'drizzle-orm';
 import { users } from './users.schema';
 import { events } from './events.schema';
-import { venues } from './venues.schema';
 import { seats } from './seats.schema';
 import { bookings } from './bookings.schema';
 
@@ -10,28 +9,14 @@ export const usersRelations = relations(users, ({ many }) => ({
   bookings: many(bookings),
 }));
 
-// ────── Venues Relations ──────
-export const venuesRelations = relations(venues, ({ many }) => ({
-  events: many(events),
-  seats: many(seats),
-}));
-
 // ────── Events Relations ──────
-export const eventsRelations = relations(events, ({ one, many }) => ({
-  venue: one(venues, {
-    fields: [events.venueId],
-    references: [venues.id],
-  }),
+export const eventsRelations = relations(events, ({ many }) => ({
   seats: many(seats),
   bookings: many(bookings),
 }));
 
 // ────── Seats Relations ──────
 export const seatsRelations = relations(seats, ({ one, many }) => ({
-  venue: one(venues, {
-    fields: [seats.venueId],
-    references: [venues.id],
-  }),
   event: one(events, {
     fields: [seats.eventId],
     references: [events.id],

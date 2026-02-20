@@ -14,6 +14,8 @@ export const bookings = mysqlTable('bookings', {
   seatId: int('seat_id')
     .references(() => seats.id)
     .notNull(),
+  username: varchar('username', { length: 255 }).notNull(),
+  concertName: varchar('concert_name', { length: 255 }).notNull(),
   status: varchar('status', { length: 50 }).notNull().default('pending'),
   bookingCode: varchar('booking_code', { length: 100 }).notNull().unique(),
   createdAt: timestamp('created_at').defaultNow().notNull(),

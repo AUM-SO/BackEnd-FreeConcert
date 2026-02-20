@@ -27,16 +27,21 @@ async function resetDatabase() {
     process.exit(0);
   }
 
+  const dbName = process.env.DB_NAME || 'freeconcert';
+
   const connection = await mysql.createConnection({
     host: process.env.DB_HOST || 'localhost',
     port: Number(process.env.DB_PORT) || 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'freeconcert',
     multipleStatements: true,
   });
 
   try {
+    // Ensure database exists
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
+    await connection.query(`USE \`${dbName}\`;`);
+
     console.log('\n🗑️  Dropping all tables...');
 
     // Disable foreign key checks

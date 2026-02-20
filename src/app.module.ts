@@ -7,7 +7,6 @@ import { DrizzleModule } from './database/drizzle.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { EventsModule } from './modules/events/events.module';
-import { VenuesModule } from './modules/venues/venues.module';
 import { BookingsModule } from './modules/bookings/bookings.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import databaseConfig from './config/database.config';
@@ -30,7 +29,6 @@ import appConfig from './config/app.config';
     AuthModule,
     UsersModule,
     EventsModule,
-    VenuesModule,
     BookingsModule,
     NotificationsModule,
   ],

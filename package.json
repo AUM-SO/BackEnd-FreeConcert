@@ -8,6 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "setup:dev": "yarn install && yarn db:create && yarn gen-db && yarn db:seed",
     "dev": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -20,9 +21,11 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "gen-db": "drizzle-kit generate && drizzle-kit migrate && drizzle-kit push",
     "db:studio": "drizzle-kit studio",
+    "db:create": "ts-node src/database/create-db.ts",
+    "db:push": "drizzle-kit push",
     "db:seed": "ts-node src/database/seed.ts",
     "db:reset": "ts-node src/database/reset.ts",
-    "db:dev": "yarn db:push && yarn db:seed"
+    "db:dev": "yarn db:create && yarn db:push && yarn db:seed"
   },
   "dependencies": {
     "@nestjs/bull": "^11.0.4",

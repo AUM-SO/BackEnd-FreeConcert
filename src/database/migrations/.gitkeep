@@ -1,6 +1,0 @@
-# Migrations
-
-This directory contains Drizzle ORM migration files.
-
-Run `npm run db:generate` to generate migrations from your schema changes.
-Run `npm run db:migrate` to apply pending migrations.

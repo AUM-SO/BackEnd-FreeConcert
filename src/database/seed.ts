@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/mysql2';
 import * as mysql from 'mysql2/promise';
 import * as dotenv from 'dotenv';
 import * as bcrypt from 'bcrypt';
-import { users, venues, events, seats } from './schema';
+import { users, events, seats } from './schema';
 
 dotenv.config();
 
@@ -49,50 +49,15 @@ async function seed() {
     ]);
     console.log('✅ Users created');
 
-    // 2. Create Venues
-    console.log('🏟️  Creating venues...');
-    const venueResults = await db.insert(venues).values([
-      {
-        name: 'Central Park Arena',
-        address: '123 Main Street, Central District',
-        city: 'Bangkok',
-        capacity: 5000,
-        description: 'State-of-the-art indoor arena with excellent acoustics',
-        imageUrl: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3',
-      },
-      {
-        name: 'Riverside Open Theater',
-        address: '456 River Road',
-        city: 'Bangkok',
-        capacity: 3000,
-        description: 'Beautiful outdoor venue by the river',
-        imageUrl: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4',
-      },
-      {
-        name: 'Sky Garden Hall',
-        address: '789 Sky Tower, 50th Floor',
-        city: 'Bangkok',
-        capacity: 1000,
-        description: 'Intimate rooftop venue with city views',
-        imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14',
-      },
-    ]);
-    console.log('✅ Venues created');
-
-    // 3. Create Events
+    // 2. Create Events
     console.log('🎵 Creating events...');
-    const now = new Date();
-    const futureDate1 = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // +7 days
-    const futureDate2 = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000); // +14 days
-    const futureDate3 = new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000); // +21 days
 
-    const eventResults = await db.insert(events).values([
+    await db.insert(events).values([
       {
         title: 'Summer Rock Festival 2026',
         description:
           'The biggest rock festival of the year featuring international and local bands',
         imageUrl: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3',
-        venueId: 1,
         totalSeats: 100,
         availableSeats: 100,
         status: 'published',
@@ -101,7 +66,6 @@ async function seed() {
         title: 'Jazz Night Under Stars',
         description: 'Relaxing evening of smooth jazz by the riverside',
         imageUrl: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4',
-        venueId: 2,
         totalSeats: 80,
         availableSeats: 80,
         status: 'published',
@@ -110,7 +74,6 @@ async function seed() {
         title: 'Acoustic Sunset Session',
         description: 'Intimate acoustic performance with city skyline views',
         imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14',
-        venueId: 3,
         totalSeats: 50,
         availableSeats: 50,
         status: 'published',
@@ -118,10 +81,9 @@ async function seed() {
     ]);
     console.log('✅ Events created');
 
-    // 4. Create Seats for Event 1 (100 seats)
+    // 3. Create Seats
     console.log('💺 Creating seats...');
     const seatsData: Array<{
-      venueId: number;
       eventId: number;
       section: string;
       row: string;
@@ -132,7 +94,6 @@ async function seed() {
     // Event 1: 100 seats (VIP: 20, Section A: 40, Section B: 40)
     for (let i = 1; i <= 20; i++) {
       seatsData.push({
-        venueId: 1,
         eventId: 1,
         section: 'VIP',
         row: String(Math.ceil(i / 10)),
@@ -142,7 +103,6 @@ async function seed() {
     }
     for (let i = 1; i <= 40; i++) {
       seatsData.push({
-        venueId: 1,
         eventId: 1,
         section: 'A',
         row: String(Math.ceil(i / 10)),
@@ -152,7 +112,6 @@ async function seed() {
     }
     for (let i = 1; i <= 40; i++) {
       seatsData.push({
-        venueId: 1,
         eventId: 1,
         section: 'B',
         row: String(Math.ceil(i / 10)),
@@ -164,7 +123,6 @@ async function seed() {
     // Event 2: 80 seats (Section A: 40, Section B: 40)
     for (let i = 1; i <= 40; i++) {
       seatsData.push({
-        venueId: 2,
         eventId: 2,
         section: 'A',
         row: String(Math.ceil(i / 10)),
@@ -174,7 +132,6 @@ async function seed() {
     }
     for (let i = 1; i <= 40; i++) {
       seatsData.push({
-        venueId: 2,
         eventId: 2,
         section: 'B',
         row: String(Math.ceil(i / 10)),
@@ -186,7 +143,6 @@ async function seed() {
     // Event 3: 50 seats (General: 50)
     for (let i = 1; i <= 50; i++) {
       seatsData.push({
-        venueId: 3,
         eventId: 3,
         section: 'General',
         row: String(Math.ceil(i / 10)),
@@ -201,7 +157,6 @@ async function seed() {
     console.log('🎉 Seeding completed successfully!');
     console.log('\n📋 Summary:');
     console.log('- 3 Users (1 admin, 2 regular users)');
-    console.log('- 3 Venues');
     console.log('- 3 Events');
     console.log(`- ${seatsData.length} Seats`);
     console.log('\n🔑 Test Credentials:');

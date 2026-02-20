@@ -1,12 +1,8 @@
 import { mysqlTable, int, varchar, timestamp } from 'drizzle-orm/mysql-core';
-import { venues } from './venues.schema';
 import { events } from './events.schema';
 
 export const seats = mysqlTable('seats', {
   id: int('id').primaryKey().autoincrement(),
-  venueId: int('venue_id')
-    .references(() => venues.id)
-    .notNull(),
   eventId: int('event_id')
     .references(() => events.id)
     .notNull(),

@@ -19,7 +19,6 @@ export class EventsService {
 
     // Create seat rows for the new event
     const seatsData: Array<{
-      venueId: number;
       eventId: number;
       section: string;
       row: string;
@@ -29,7 +28,6 @@ export class EventsService {
 
     for (let i = 1; i <= createEventDto.totalSeats; i++) {
       seatsData.push({
-        venueId: createEventDto.venueId ?? 0,
         eventId,
         section: 'General',
         row: String(Math.ceil(i / 10)),

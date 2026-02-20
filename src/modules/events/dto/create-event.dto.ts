@@ -16,11 +16,6 @@ export class CreateEventDto {
   @IsString()
   imageUrl?: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsInt()
-  venueId?: number;
-
   @ApiProperty({ example: 500 })
   @IsInt()
   @Min(1)

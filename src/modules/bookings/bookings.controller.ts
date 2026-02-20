@@ -28,9 +28,10 @@ export class BookingsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get my bookings' })
+  @ApiOperation({ summary: 'Get bookings (admin: all, user: own)' })
   findAll(@Request() req) {
-    return this.bookingsService.findAll(req.user.id);
+    const userId = req.user.role === 'admin' ? undefined : req.user.id;
+    return this.bookingsService.findAll(userId);
   }
 
   @Get(':id')

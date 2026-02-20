@@ -1,7 +1,7 @@
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, ne } from 'drizzle-orm';
 import { DRIZZLE } from '../../database/drizzle.module';
-import { bookings, seats, events } from '../../database/schema';
+import { bookings, seats, events, users } from '../../database/schema';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { randomBytes } from 'crypto';
 
@@ -19,6 +19,17 @@ export class BookingsService {
 
     if (!event) {
       throw new NotFoundException('Event not found');
+    }
+
+    // Check if user already has any active booking (1 user = 1 reservation)
+    const [existingBooking] = await this.db
+      .select()
+      .from(bookings)
+      .where(and(eq(bookings.userId, userId), ne(bookings.status, 'cancelled')))
+      .limit(1);
+
+    if (existingBooking) {
+      throw new BadRequestException('คุณมีการจองที่นั่งอยู่แล้ว ไม่สามารถจองเพิ่มได้');
     }
 
     // Check seat availability
@@ -69,10 +80,34 @@ export class BookingsService {
   }
 
   async findAll(userId?: number) {
+    const query = this.db
+      .select({
+        id: bookings.id,
+        userId: bookings.userId,
+        eventId: bookings.eventId,
+        seatId: bookings.seatId,
+        status: bookings.status,
+        bookingCode: bookings.bookingCode,
+        createdAt: bookings.createdAt,
+        updatedAt: bookings.updatedAt,
+        user: {
+          id: users.id,
+          email: users.email,
+          name: users.name,
+        },
+        event: {
+          id: events.id,
+          title: events.title,
+        },
+      })
+      .from(bookings)
+      .leftJoin(users, eq(bookings.userId, users.id))
+      .leftJoin(events, eq(bookings.eventId, events.id));
+
     if (userId) {
-      return this.db.select().from(bookings).where(eq(bookings.userId, userId));
+      return query.where(eq(bookings.userId, userId));
     }
-    return this.db.select().from(bookings);
+    return query;
   }
 
   async findOne(id: number) {

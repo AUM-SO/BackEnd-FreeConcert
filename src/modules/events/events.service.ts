@@ -12,11 +12,40 @@ export class EventsService {
   async create(createEventDto: CreateEventDto) {
     const result = await this.db.insert(events).values({
       ...createEventDto,
+      availableSeats: createEventDto.totalSeats,
     });
+
+    const eventId = result[0].insertId;
+
+    // Create seat rows for the new event
+    const seatsData: Array<{
+      venueId: number;
+      eventId: number;
+      section: string;
+      row: string;
+      number: string;
+      status: string;
+    }> = [];
+
+    for (let i = 1; i <= createEventDto.totalSeats; i++) {
+      seatsData.push({
+        venueId: createEventDto.venueId ?? 0,
+        eventId,
+        section: 'General',
+        row: String(Math.ceil(i / 10)),
+        number: String(i),
+        status: 'available',
+      });
+    }
+
+    if (seatsData.length > 0) {
+      await this.db.insert(seats).values(seatsData);
+    }
+
     const [event] = await this.db
       .select()
       .from(events)
-      .where(eq(events.id, result[0].insertId))
+      .where(eq(events.id, eventId))
       .limit(1);
     return event;
   }

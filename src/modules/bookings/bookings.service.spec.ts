@@ -212,23 +212,23 @@ describe('BookingsService', () => {
       await expect(service.create(userId, createDto)).rejects.toThrow(NotFoundException);
     });
 
-    it('should throw BadRequestException when user already has an active booking', async () => {
+    it('should throw BadRequestException when user already has an active booking for the same event', async () => {
       mockDb.select
         .mockReturnValueOnce(createChain([mockEvent]))
         .mockReturnValueOnce(createChain([mockUser]))
-        .mockReturnValueOnce(createChain([mockBooking])); // existing active booking
+        .mockReturnValueOnce(createChain([mockBooking])); // existing active booking for same event
 
       await expect(service.create(userId, createDto)).rejects.toThrow(BadRequestException);
     });
 
-    it('should throw BadRequestException with Thai error message when user already has a booking', async () => {
+    it('should throw BadRequestException with Thai error message when user already has a booking for the same event', async () => {
       mockDb.select
         .mockReturnValueOnce(createChain([mockEvent]))
         .mockReturnValueOnce(createChain([mockUser]))
         .mockReturnValueOnce(createChain([mockBooking]));
 
       await expect(service.create(userId, createDto)).rejects.toThrow(
-        'คุณมีการจองที่นั่งอยู่แล้ว ไม่สามารถจองเพิ่มได้'
+        'คุณได้จอง event นี้ไปแล้ว ไม่สามารถจองซ้ำได้'
       );
     });
 

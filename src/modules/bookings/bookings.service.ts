@@ -30,15 +30,21 @@ export class BookingsService {
       throw new NotFoundException('User not found');
     }
 
-    // Check if user already has any active booking (1 user = 1 reservation)
+    // Check if user already has an active booking for this specific event (1 user = 1 seat per event)
     const [existingBooking] = await this.db
       .select()
       .from(bookings)
-      .where(and(eq(bookings.userId, userId), ne(bookings.status, 'cancelled')))
+      .where(
+        and(
+          eq(bookings.userId, userId),
+          eq(bookings.eventId, createBookingDto.eventId),
+          ne(bookings.status, 'cancelled'),
+        ),
+      )
       .limit(1);
 
     if (existingBooking) {
-      throw new BadRequestException('คุณมีการจองที่นั่งอยู่แล้ว ไม่สามารถจองเพิ่มได้');
+      throw new BadRequestException('คุณได้จอง event นี้ไปแล้ว ไม่สามารถจองซ้ำได้');
     }
 
     // Check seat availability
